@@ -14,15 +14,19 @@ bot.on('message', msg => {
     if (!msg.content.startsWith(prefix)) return;
     if (msg.author.bot) return;
 
-    const _id = msg.author.username;
+    var _id = msg.author.username;
 
     switch(args[0]) {
         case "reg":
+
             if (args.length < 2) return msg.channel.send("No specs provided bruh. Please write it out in text, like this: Core i7-1160G7 16gb DDR4 2400MHz GIGABYTE GeForce RTX 2060");
-            if (msg.attachments.array().length < 1) return msg.channel.send("No pic provided. Please attach an image of your build along with your specs.");
 
             let specs = args.slice(1).join(" ");
-            let setup_pic = msg.attachments.array()[0].url;
+            var setup_pic = "";
+
+            if (msg.attachments.array().length > 0) {
+                setup_pic = msg.attachments.array()[0].url;
+            }
 
             msg.react("🔥");
             msg.channel.send("Registering machine ⚙");
@@ -56,7 +60,7 @@ bot.on('message', msg => {
             msg.react("👍");
             msg.channel.send("Retrieving build 🔎");
             
-            axios.get(`https://employees-atlas-api.herokuapp.com/specs/${_id}`)
+            axios.get(`https://employees-atlas-api.herokuapp.com/specs/${args[1]}`)
             .then(doc => {
                 msg.channel.send(doc.data[0].specs);
                 const embed = new Discord.MessageEmbed()
@@ -64,7 +68,7 @@ bot.on('message', msg => {
                 .setTitle(`${doc.data[0]._id}'s Machine`)
                 .setImage(doc.data[0].setup_pic)
                 .setDescription(doc.data[0].specs)
-                .setColor("BLUE")
+                .setColor("PURPLE")
                 .setThumbnail("https://i.pinimg.com/originals/b8/cd/6d/b8cd6d45a84bd74c9d480a3b25309261.png")
                 
                 msg.channel.send(embed);
